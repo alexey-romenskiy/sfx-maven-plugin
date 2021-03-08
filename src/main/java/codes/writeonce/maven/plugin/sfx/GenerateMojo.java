@@ -32,6 +32,9 @@ public class GenerateMojo extends AbstractMojo {
     @Parameter(required = true)
     protected File sourceArchive;
 
+    @Parameter(required = true, defaultValue = "false")
+    protected boolean useTmpDir;
+
     @Parameter
     protected String installerCommand;
 
@@ -71,18 +74,22 @@ public class GenerateMojo extends AbstractMojo {
 
         try (InputStream inputStream = new FileInputStream(sourceArchive);
              FileOutputStream outputStream = new FileOutputStream(artifactFile);
-             OutputStreamWriter writer = new OutputStreamWriter(outputStream, UTF_8)) {
-            pump(buffer, outputStream, "header1.sh");
+             OutputStreamWriter writer = new OutputStreamWriter(outputStream, UTF_8);
+             Base64OutputStream base64OutputStream = new Base64OutputStream(outputStream, true, LINE_LENGTH,
+                     LINE_SEPARATOR)) {
+
+            pump(buffer, outputStream, useTmpDir ? "header1b.sh" : "header1a.sh");
+            pump(buffer, inputStream, base64OutputStream);
+            base64OutputStream.eof();
+            base64OutputStream.flush();
+            pump(buffer, outputStream, "header2.sh");
+
             if (installerCommand != null) {
+                pump(buffer, outputStream, "header3.sh");
                 writer.write(installerCommand);
                 writer.write('\n');
                 writer.flush();
-                pump(buffer, outputStream, "header2.sh");
-            }
-            pump(buffer, outputStream, "header3.sh");
-            try (Base64OutputStream base64OutputStream = new Base64OutputStream(outputStream, true, LINE_LENGTH,
-                    LINE_SEPARATOR)) {
-                pump(buffer, inputStream, base64OutputStream);
+                pump(buffer, outputStream, "header4.sh");
             }
         }
 
