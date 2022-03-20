@@ -15,6 +15,24 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
+    <scm>
+        <connection>scm:git:https://github.com/alexey-romenskiy/sfx-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/alexey-romenskiy/sfx-maven-plugin.git</developerConnection>
+        <url>https://github.com/alexey-romenskiy/sfx-maven-plugin</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>writeonce</id>
+            <url>https://artifactory.writeonce.codes/artifactory/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>writeonce</id>
+            <url>https://artifactory.writeonce.codes/artifactory/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
